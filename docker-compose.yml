@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: olist-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: olist_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # Mount local data folder (for CSVs)
+      - ./data:/var/data
+      # Mount local sql folder (for scripts)
+      - ./sql:/var/sql
+      # Persistent database storage
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

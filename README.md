@@ -50,6 +50,8 @@ This project performs an end-to-end data analysis on the **Olist Brazilian E-Com
 - `load_data.sh` — Automation script for data ingestion
 - `README.md` — This file
 
+
+
 ---
 
 ## 🚀 How to Reproduce This Analysis
@@ -64,31 +66,43 @@ This project is fully containerized using **Docker** to ensure reproducibility a
 Spin up the PostgreSQL container using Docker Compose:
 ```bash
 docker compose up -d
+```
 
 ### Step 2: Create the Database Schema
 Run the schema setup script to create tables with proper constraints (Primary/Foreign Keys):
+
 ```bash
 docker exec -i olist-postgres psql -U postgres -d olist_db < sql/00_schema_setup.sql
+```
 
 ### Step 3: Ingest the Data
 Use the automated bash script to load all 9 CSV files into the database. This script handles the mapping between local files and the container paths:
+
+```bash
 # Make the script executable
 chmod +x load_data.sh
 
 # Run the ingestion
 ./load_data.sh
+```
 
 ### Step 4: Run the Analysis
 Execute the analysis scripts in order. You can run them individually or all at once.
 
-Quality Check:
+**Quality Check:**
+```bash
 docker exec -i olist-postgres psql -U postgres -d olist_db -f /var/sql/01_data_profiling.sql
+```
 
-Exploratory Data Analysis (EDA):
+**Exploratory Data Analysis (EDA):**
+```bash
 docker exec -i olist-postgres psql -U postgres -d olist_db -f /var/sql/02_eda_queries.sql
+```
 
-Core Modeling (RFM Segmentation & Seller Ranking):
+**Core Modeling (RFM Segmentation & Seller Ranking):**
+```bash
 docker exec -i olist-postgres psql -U postgres -d olist_db -f /var/sql/03_core_analysis.sql
+```
 
 ### Step 5: View Results
-The output will be printed directly to your terminal. For persistent results, you can modify the scripts to export to CSV using the \copy command into the /var/data/outputs directory.
+The output will be printed directly to your terminal. For persistent results, you can modify the scripts to export to CSV using the `\copy` command into the `/var/data/outputs` directory.

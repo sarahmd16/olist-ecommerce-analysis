@@ -76,16 +76,57 @@ docker exec -i olist-postgres psql -U postgres -d olist_db < sql/00_schema_setup
 ```
 
 ### Step 3: Ingest the Data
-Use the automated bash script to load all 9 CSV files into the database. This script handles the mapping between local files and the container paths:
+Load the CSV files into the database. Since the `/data` folder is mounted to `/var/data` inside the container, we use PostgreSQL’s `\copy` command via `docker exec`.
+
+Run the following commands from your **local terminal (outside the container)**:
 
 ```bash
-# Make the script executable
-chmod +x load_data.sh
+# 1. Customers
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy customers FROM '/var/data/olist_customers_dataset.csv' DELIMITER ',' CSV HEADER;"
 
-# Run the ingestion
+# 2. Geolocation
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy geolocation FROM '/var/data/olist_geolocation_dataset.csv' DELIMITER ',' CSV HEADER;"
+
+# 3. Sellers
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy sellers FROM '/var/data/olist_sellers_dataset.csv' DELIMITER ',' CSV HEADER;"
+
+# 4. Products
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy products FROM '/var/data/olist_products_dataset.csv' DELIMITER ',' CSV HEADER;"
+
+# 5. Product Category Translation
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy product_category_name_translation FROM '/var/data/product_category_name_translation.csv' DELIMITER ',' CSV HEADER;"
+
+# 6. Orders
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy orders FROM '/var/data/olist_orders_dataset.csv' DELIMITER ',' CSV HEADER;"
+
+# 7. Order Items
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy order_items FROM '/var/data/olist_order_items_dataset.csv' DELIMITER ',' CSV HEADER;"
+
+# 8. Order Payments
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy order_payments FROM '/var/data/olist_order_payments_dataset.csv' DELIMITER ',' CSV HEADER;"
+
+# 9. Order Reviews
+docker exec -i olist-postgres psql -U postgres -d olist_db -c "\copy order_reviews FROM '/var/data/olist_order_reviews_dataset.csv' DELIMITER ',' CSV HEADER;"
+```
+
+### (Optional) Automate the Ingestion
+To streamline the workflow, you can automate the above commands using a shell script:
+
+```bash
+chmod +x load_data.sh
 ./load_data.sh
 ```
 
+### Step 4: Verify the Ingestion
+Quickly validate that the data loaded correctly:
+
+```sql
+SELECT COUNT(*) FROM orders;
+SELECT COUNT(*) FROM customers;
+SELECT COUNT(*) FROM order_items;
+```
+
+If counts are greater than 0 (and roughly match dataset expectations), the ingestion was successful.
 ### Step 4: Run the Analysis
 Execute the analysis scripts in order. You can run them individually or all at once.
 

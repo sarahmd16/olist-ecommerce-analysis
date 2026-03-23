@@ -6,18 +6,11 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ## 📖 Overview
-This project performs an end-to-end data analysis on the **Olist Brazilian E-Commerce Dataset** (100k+ orders, 2016-2018). Leveraging skills in **Data Analysis**, **DevOps**, and **Backend Engineering**, this project moves beyond simple reporting to deliver **actionable business strategies** for improving customer retention and leveraging operational strengths.
+This project performs a data analysis on the **Olist Brazilian E-Commerce Dataset** (100k+ orders, 2016-2018). The analysis focuses on understanding customer behavior, improving retention, and identifying operational patterns using SQL.
 
-**Key Achievement:** Identified a **$500k+ revenue recovery opportunity** by segmenting "At Risk" high-value customers using advanced SQL window functions and RFM modeling.
-
----
-
-## 💡 Key Business Insights
-1.  **Revenue Recovery Opportunity:** ~18,000 "At Risk" customers (high spend, low recency) were identified. A targeted reactivation campaign could recover significant revenue.
-2.  **Logistics as a USP:** Orders are delivered **11 days early** on average. This operational excellence is currently under-utilized in marketing messaging.
-3.  **Retention Gap:** 85% of customers are one-time buyers. The business model is heavily acquisition-dependent, signaling a need for a structured loyalty program.
 
 ---
+
 
 ## 🛠️ Tech Stack & Methodologies
 | Category | Tools & Techniques |
@@ -60,7 +53,7 @@ This project is fully containerized using **Docker** to ensure reproducibility a
 ### Prerequisites
 - **Docker** and **Docker Compose** installed on your machine.
 - The **9 Olist dataset CSV files** downloaded and placed inside the local `/data` folder.
-  - Files needed: `olist_customers_dataset.csv`, `olist_orders_dataset.csv`, `olist_order_items_dataset.csv`, etc.
+Dataset: [Olist Brazilian E-Commerce Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)
 
 ### Step 1: Start the Database
 Spin up the PostgreSQL container using Docker Compose:
@@ -127,7 +120,7 @@ SELECT COUNT(*) FROM order_items;
 ```
 
 If counts are greater than 0 (and roughly match dataset expectations), the ingestion was successful.
-### Step 4: Run the Analysis
+### Step 5: Run the Analysis
 Execute the analysis scripts in order. You can run them individually or all at once.
 
 **Quality Check:**
@@ -145,5 +138,14 @@ docker exec -i olist-postgres psql -U postgres -d olist_db -f /var/sql/02_eda_qu
 docker exec -i olist-postgres psql -U postgres -d olist_db -f /var/sql/03_core_analysis.sql
 ```
 
-### Step 5: View Results
-The output will be printed directly to your terminal. For persistent results, you can modify the scripts to export to CSV using the `\copy` command into the `/var/data/outputs` directory.
+### Step 6: Analyze & Document Results
+The query outputs will be printed directly in your terminal.
+
+At this stage, interpret the results and document your findings:
+
+- Data Quality → `docs/quality_report.md`
+- EDA Insights → `docs/eda_observations.md`
+- Core Modeling Insights → `docs/core_analysis_insights.md`
+
+
+```
